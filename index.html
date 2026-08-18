@@ -467,6 +467,19 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
 .track-card.selected{border-color:var(--g800);background:var(--g50);}
 .track-card .sel-ring{position:absolute;top:12px;right:12px;width:20px;height:20px;border-radius:50%;border:1.5px solid var(--gray300);background:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;}
 .track-card.selected .sel-ring{background:var(--g800);border-color:var(--g800);color:#fff;}
+/* ══ Explorer mode selector (AI Career Coach vs Choose a Career Track) ══ */
+.explorer-mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.explorer-mode-card{border:1.5px solid var(--gray200);border-radius:var(--radius-md);padding:16px;cursor:pointer;transition:all .18s;background:#fff;position:relative;}
+.explorer-mode-card:hover{border-color:var(--g600);box-shadow:var(--shadow-sm);}
+.explorer-mode-card.selected{border-color:var(--g800);background:var(--g50);}
+.explorer-mode-card .sel-ring{position:absolute;top:12px;right:12px;width:20px;height:20px;border-radius:50%;border:1.5px solid var(--gray300);background:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;}
+.explorer-mode-card.selected .sel-ring{background:var(--g800);border-color:var(--g800);color:#fff;}
+/* ══ AI Career Coach flow ══ */
+.agent-pipeline{display:flex;align-items:center;flex-wrap:wrap;gap:6px;}
+.agent-pill{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:5px 10px;border-radius:999px;background:var(--p100);color:var(--p700);}
+.agent-arrow{color:var(--gray400);font-size:13px;}
+.coach-suggest-chip{font-size:11px;padding:4px 10px;border-radius:999px;background:var(--gray100);color:var(--gray600);cursor:pointer;border:1px solid var(--gray200);transition:all .15s;}
+.coach-suggest-chip:hover{background:var(--g50);border-color:var(--g600);color:var(--g800);}
 .appt-select{width:100%;padding:10px 14px;font-size:13px;font-weight:500;border:1.5px solid var(--gray300);border-radius:var(--radius-sm);background:#fff;color:var(--gray900);cursor:pointer;}
 .appt-select:focus{outline:none;border-color:var(--g800);}
 .ladder-wrap{padding:4px 0;}
@@ -589,6 +602,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
 
   /* Track grid: stack on mobile */
   .track-grid{grid-template-columns:1fr;}
+  .explorer-mode-grid{grid-template-columns:1fr;}
 
   /* Bmark chart: narrower label */
   .bmark-label{width:130px;font-size:11px;}
@@ -874,8 +888,33 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
     <!-- Path Explorer -->
     <div id="path-explorer-anchor" style="display:inline-flex;align-items:center;gap:10px;margin-bottom:18px;">
       <span class="section-tag st-a" style="margin-bottom:0;">Path Explorer</span>
-      <span style="font-size:12px;color:var(--gray500);">Select a track, then choose your target appointment</span>
+      <span style="font-size:12px;color:var(--gray500);">Ask your AI Career Coach, or choose a structured career track</span>
     </div>
+
+    <!-- Explorer mode selector -->
+    <div class="pe-block">
+      <div class="pe-block-title">How do you want to explore?</div>
+      <div class="explorer-mode-grid">
+
+        <div class="explorer-mode-card" id="mode-card-coach" onclick="selectExplorerMode('coach',this)">
+          <div class="sel-ring"></div>
+          <div class="path-icon">🧭</div>
+          <div class="path-name">Ask my AI Career Coach</div>
+          <div class="path-sub">Describe a direction in your own words — even a non-obvious one — and get an interactive, agent-backed read of what's realistic, what's missing, and what to develop next. No peer benchmark, since these paths aren't yet well-trodden.</div>
+        </div>
+
+        <div class="explorer-mode-card" id="mode-card-track" onclick="selectExplorerMode('track',this)">
+          <div class="sel-ring"></div>
+          <div class="path-icon">🗺️</div>
+          <div class="path-name">Choose a Career Track</div>
+          <div class="path-sub">Pick Command, Staff, or Instructor, then a specific target appointment, and see the structured path, prerequisites and peer benchmark to get there.</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- MODE: Choose a Career Track (existing flow, unchanged) -->
+    <div id="mode-track-flow" style="display:none;">
 
     <!-- 1. Track selection -->
     <div class="pe-block">
@@ -968,43 +1007,6 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
       </div>
     </div>
 
-    <!-- 5. Prep Brief -->
-    <div class="pe-block" id="brief-outer-block" style="display:none;">
-      <div class="pe-block-title">Career Conversation Prep Brief</div>
-      <div style="font-size:13px;color:var(--gray600);margin-bottom:14px;">Your Career Twin has drafted the following brief for your Career Pact conversation.</div>
-      <div class="brief-box" id="brief-box" style="display:block;">
-        <div class="brief-header">
-          <div class="brief-title">📋 Career Conversation Prep Brief</div>
-          <span class="brief-badge">Auto-generated</span>
-        </div>
-        <div class="brief-section">
-          <div class="brief-section-label">Member</div>
-          <div class="brief-text" id="brief-member">CPT Tan Wei Xiang · Weapons System Officer (Fighter) · F-15SG Sqn · 7 years service</div>
-        </div>
-        <div class="brief-section">
-          <div class="brief-section-label">Stated Aspiration</div>
-          <div class="brief-text" id="brief-aspiration">—</div>
-        </div>
-        <div class="brief-section">
-          <div class="brief-section-label">Paths Explored</div>
-          <div class="brief-chips" id="brief-paths-chips"></div>
-        </div>
-        <div class="brief-section">
-          <div class="brief-section-label">Key Questions for Conversation</div>
-          <div class="brief-text" id="brief-questions">—</div>
-        </div>
-        <div class="brief-section">
-          <div class="brief-section-label">Gaps to Discuss</div>
-          <div class="brief-text" id="brief-gaps">—</div>
-        </div>
-      </div>
-      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:12px;">
-        <button class="btn btn-primary" onclick="sendCareerBrief()">✓ Send Career Conversation Brief</button>
-        <button class="btn btn-ghost" onclick="aReset()">↺ Start over</button>
-        <span style="font-size:11px;color:var(--gray400);">Will be sent to: Member · Supervisor · Career Manager · SSO</span>
-      </div>
-    </div>
-
     <!-- 6. Compare tracks (collapsible) -->
     <div class="pe-collapsible" id="wi-block" style="display:none;">
       <button class="pe-collapse-btn" onclick="togglePeSection('wi-body','wi-chevron')">
@@ -1040,6 +1042,102 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
         <div style="font-size:13px;color:var(--gray600);margin-bottom:14px;">Analyses your full profile and surfaces non-obvious paths you wouldn't have thought to explore.</div>
         <div style="font-size:12px;font-weight:600;color:var(--gray500);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;" id="ai-gen-heading">3 non-obvious paths suggested for CPT Tan Wei Xiang (WSO Fighter)</div>
         <div id="ai-cards-body"></div>
+      </div>
+    </div>
+
+    </div><!-- /mode-track-flow -->
+
+    <!-- MODE: Ask my AI Career Coach -->
+    <div id="mode-ai-coach-flow" style="display:none;">
+
+      <div class="pe-block">
+        <div class="pe-block-title">Tell your AI Career Coach what you're thinking</div>
+        <div style="font-size:12px;color:var(--gray600);margin-bottom:12px;">Type a broad direction, interest, or role you're curious about — not a fixed track. The Explorer Agent reads your profile and consults the Planning and Matching Agents behind the scenes to give you a grounded read.</div>
+        <div style="display:flex;gap:8px;align-items:flex-start;flex-wrap:wrap;">
+          <input type="text" id="coach-input" class="appt-select" style="flex:1;min-width:240px;" placeholder="e.g. &quot;I'm interested in cyber and drones&quot; or &quot;something in capability development&quot;" onkeydown="if(event.key==='Enter'){askCareerCoach();}">
+          <button class="btn btn-primary" onclick="askCareerCoach()">Ask Coach →</button>
+        </div>
+        <div style="font-size:11px;color:var(--gray400);margin:8px 0 4px;">Try one of these, or type your own:</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;" id="coach-suggest-chips"></div>
+      </div>
+
+      <div class="pe-block" id="coach-thinking-block" style="display:none;">
+        <div class="ai-loading" style="display:flex;">
+          <span class="ai-dot"></span><span class="ai-dot"></span><span class="ai-dot"></span>
+          <span id="coach-thinking-text" style="margin-left:4px;">Explorer Agent is consulting the Planning and Matching Agents…</span>
+        </div>
+      </div>
+
+      <div id="coach-response-block" style="display:none;">
+
+        <div class="pe-block">
+          <div class="pe-block-title">Agents consulted</div>
+          <div class="agent-pipeline" id="coach-agent-pipeline"></div>
+        </div>
+
+        <div class="pe-block">
+          <div class="pe-block-title" id="coach-response-heading">What your Career Coach found</div>
+          <div class="ai-card" id="coach-response-card" style="margin-bottom:0;"></div>
+        </div>
+
+        <div style="background:var(--a100);border:1px solid #fde68a;border-radius:var(--radius-sm);padding:10px 14px;font-size:12px;color:var(--a900);margin-bottom:20px;">
+          ⚠️ <strong>No peer benchmark shown.</strong> This is a less conventional path, so there isn't yet a reliable "% of similar profiles" figure to compare it against.
+        </div>
+
+        <div class="two-col" style="margin-bottom:20px;">
+          <div class="col-card">
+            <div class="col-card-title">What you'd still need to develop</div>
+            <div id="coach-gap-list"></div>
+          </div>
+          <div class="col-card">
+            <div class="col-card-title">Suggested next step</div>
+            <div style="font-size:13px;color:var(--gray700);line-height:1.6;" id="coach-next-step">—</div>
+          </div>
+        </div>
+
+        <div class="pe-block">
+          <button class="btn btn-primary" onclick="generateCoachBrief()">📋 Generate Career Conversation Prep Brief</button>
+          <button class="btn btn-ghost" onclick="resetCoachFlow()" style="margin-left:8px;">↺ Ask something else</button>
+        </div>
+
+      </div><!-- /coach-response-block -->
+
+    </div><!-- /mode-ai-coach-flow -->
+
+    <!-- 5. Prep Brief (shared — either explorer mode can generate this) -->
+    <div class="pe-block" id="brief-outer-block" style="display:none;">
+      <div class="pe-block-title">Career Conversation Prep Brief</div>
+      <div style="font-size:13px;color:var(--gray600);margin-bottom:14px;">Your Career Twin has drafted the following brief for your Career Pact conversation.</div>
+      <div class="brief-box" id="brief-box" style="display:block;">
+        <div class="brief-header">
+          <div class="brief-title">📋 Career Conversation Prep Brief</div>
+          <span class="brief-badge">Auto-generated</span>
+        </div>
+        <div class="brief-section">
+          <div class="brief-section-label">Member</div>
+          <div class="brief-text" id="brief-member">CPT Tan Wei Xiang · Weapons System Officer (Fighter) · F-15SG Sqn · 7 years service</div>
+        </div>
+        <div class="brief-section">
+          <div class="brief-section-label">Stated Aspiration</div>
+          <div class="brief-text" id="brief-aspiration">—</div>
+        </div>
+        <div class="brief-section">
+          <div class="brief-section-label">Paths Explored</div>
+          <div class="brief-chips" id="brief-paths-chips"></div>
+        </div>
+        <div class="brief-section">
+          <div class="brief-section-label">Key Questions for Conversation</div>
+          <div class="brief-text" id="brief-questions">—</div>
+        </div>
+        <div class="brief-section">
+          <div class="brief-section-label">Gaps to Discuss</div>
+          <div class="brief-text" id="brief-gaps">—</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:12px;">
+        <button class="btn btn-primary" onclick="sendCareerBrief()">✓ Send Career Conversation Brief</button>
+        <button class="btn btn-ghost" onclick="aReset()">↺ Start over</button>
+        <span style="font-size:11px;color:var(--gray400);">Will be sent to: Member · Supervisor · Career Manager · SSO</span>
       </div>
     </div>
 
@@ -2287,9 +2385,15 @@ function renderStakeholderBrief(role){
   const p=personaData[currentPersona];
   const trackLabel={command:'Command Track',staff:'Staff Track',cross:'Instructor Track'};
   const trackIcon={command:'✈️',staff:'🏛️',cross:'🎓'};
-  const track=selectedTrack||'—';
-  const trackName=trackLabel[track]||'—';
-  const icon=trackIcon[track]||'';
+  let trackName, icon;
+  if(explorerMode==='coach' && currentCoachMatch){
+    icon='🧭';
+    trackName=`AI Career Coach — ${currentCoachMatch.heading||currentCoachQuery||'exploration'}`;
+  } else {
+    const track=selectedTrack||'—';
+    trackName=trackLabel[track]||'—';
+    icon=trackIcon[track]||'';
+  }
 
   if(role==='career-mgr'){
     const el=document.getElementById('cmgr-brief-body');
@@ -2355,6 +2459,7 @@ document.getElementById('page-c').style.display='none';
 
 /* ══ Section A — Path Explorer ══ */
 let currentPersona='tan', selectedTrack=null, selectedAppt=null, exploredPaths=[];
+let explorerMode=null, currentCoachMatch=null, currentCoachQuery='';
 let personaOrder=['tan','lee','kumar'];
 /* default btn metadata — admin can override via localStorage */
 const personaBtnDefaults={
@@ -2729,6 +2834,210 @@ function togglePeSection(bodyId,chevronId){
   const open=body.style.display!=='none';
   body.style.display=open?'none':'block';
   if(chev) chev.textContent=open?'▼':'▲';
+}
+
+/* ══ Explorer mode switch (AI Career Coach vs Choose a Career Track) ══ */
+function resetExplorerMode(){
+  explorerMode=null;
+  document.querySelectorAll('.explorer-mode-card').forEach(c=>{
+    c.classList.remove('selected');
+    const r=c.querySelector('.sel-ring'); if(r) r.textContent='';
+  });
+  const trackFlow=document.getElementById('mode-track-flow'); if(trackFlow) trackFlow.style.display='none';
+  const coachFlow=document.getElementById('mode-ai-coach-flow'); if(coachFlow) coachFlow.style.display='none';
+  const briefEl=document.getElementById('brief-outer-block'); if(briefEl) briefEl.style.display='none';
+  resetCoachFlow();
+}
+
+function selectExplorerMode(mode,card){
+  explorerMode=mode;
+  document.querySelectorAll('.explorer-mode-card').forEach(c=>{
+    c.classList.remove('selected');
+    const r=c.querySelector('.sel-ring'); if(r) r.textContent='';
+  });
+  if(card){ card.classList.add('selected'); const r=card.querySelector('.sel-ring'); if(r) r.textContent='✓'; }
+  const trackFlow=document.getElementById('mode-track-flow');
+  const coachFlow=document.getElementById('mode-ai-coach-flow');
+  if(trackFlow) trackFlow.style.display = mode==='track' ? 'block' : 'none';
+  if(coachFlow) coachFlow.style.display = mode==='coach' ? 'block' : 'none';
+  const briefEl=document.getElementById('brief-outer-block'); if(briefEl) briefEl.style.display='none';
+  if(mode==='coach') renderCoachSuggestChips();
+}
+
+/* ══ AI Career Coach — simulated Explorer/Planning/Matching agent pipeline ══ */
+const agentMeta={
+  explorer:{icon:'🧭',label:'Explorer Agent'},
+  planning:{icon:'🗺️',label:'Planning Agent'},
+  matching:{icon:'🧩',label:'Matching Agent'},
+  feedback:{icon:'💬',label:'Feedback Agent'}
+};
+
+/* Scripted responses — illustrates what a live agentic system (Explorer → Planning → Matching,
+   RAG'd against the E-HR & Vector DB) would return. No live model call in this prototype. */
+const coachResponses={
+  tan:{
+    suggestions:['cyber and drones','DSTA / weapons integration','joint targeting'],
+    matches:[
+      {keywords:['cyber','drone','drones','unmanned','uas','robotics','c4'],
+       agents:['explorer','planning','matching'],
+       heading:'Cyber & C4 Systems Development / Unmanned Systems',
+       response:'Your file supports this better than most WSO(Fighter) files: a pre-service B.Eng in Electrical & Computer Engineering, plus a SAF-sponsored UAS Operator Certification you completed in FY2023. The Planning Agent flags that there isn\'t an established posting ladder from F-15SG WSO into Cyber & C4 Systems Development Branch — this would be a first for your file, not a well-trodden route, which is why there\'s no peer benchmark below. The Matching Agent still reads it as viable: the technical grounding is real, it just hasn\'t been tested in an actual RSAF posting yet.',
+       gaps:[
+         {label:'No formal RSAF Cyber/C4 Dev Branch attachment yet', note:'The UAS certification and engineering degree exist, but neither has translated into RSAF-recognised experience through an actual posting or secondment'},
+         {label:'AFAC still needs to be cleared first', note:'This would most realistically sit alongside the command-track gateway, not instead of it'}
+       ],
+       nextStep:'Flag the E&CE background and UAS certification explicitly at the FY2026/27 AFAC / ground-tour Pact, and ask whether a short Cyber & C4 Systems Development Branch attachment could run alongside or after the ground tour.'},
+      {keywords:['dsta','weapons integration','weapons'],
+       agents:['explorer','planning','matching'],
+       heading:'RSAF–DSTA Weapons Integration Specialist',
+       response:'Your cockpit-level F-15SG mission systems and weapons employment experience is exactly what the DSTA weapons integration team lacks. Most programme officers have never actually employed the weapons they\'re integrating — your operational background makes you rare and directly effective in this role without retraining. The Matching Agent scores this at roughly 91% skill match, the highest of the paths it surfaced for your profile.',
+       gaps:[
+         {label:'No DSTA attachment or secondment on file', note:'The fit is strong on paper, but nothing has tested it in practice yet'},
+         {label:'Would compete for ground-tour posting priority', note:'DSTA attachment and the Air Plans/AWC ground tour options would need to be weighed against each other, not pursued as separate tracks'}
+       ],
+       nextStep:'Ask your Career Manager whether a DSTA attachment can be considered as an alternative to (or extension of) the Air Plans/AWC ground tour already under discussion.'}
+    ],
+    fallback:{
+      agents:['explorer'],
+      heading:'A broader read on your file',
+      response:'That doesn\'t map cleanly onto a specific pathway the Matching Agent has enough data to score with confidence. Based on what is on file — 7 years on F-15SG, EW Specialist, and a pre-service engineering background — the clearest and best-supported next moves are still AFAC (the command-track gateway) and formalising your Lead WSO qualification. Bring the exact wording of what you\'re exploring to your next Career Pact — your Career Manager has visibility this coach doesn\'t.',
+      gaps:[
+        {label:'No command-track credential yet', note:'AFAC not yet completed — the gateway to any MAJ command appointment'},
+        {label:'Lead WSO not yet formalised', note:'Performing the role in practice, but the qualification itself is still outstanding'}
+      ],
+      nextStep:'Discuss this exact question directly with your Career Manager at the next Career Pact conversation.'}
+  },
+  lee:{
+    suggestions:['communications / Info Centre','DIS / joint intelligence','capability development'],
+    matches:[
+      {keywords:['comms','communication','communications','media','info centre','information centre','public affairs'],
+       agents:['explorer','planning','matching'],
+       heading:'Air Force Info Centre / Strategic Communications',
+       response:'This is a genuine adjacent option, not a stretch: your pre-service Mass Communication degree, plus a self-funded Certificate in Strategic Communications (FY2023), give you a real media and audience-engagement skill set. The Planning Agent notes it doesn\'t have comparable posting-ladder data for a CO-track Fighter WSO moving into Info Centre at the MAJ stage — this would be a first, which is why no peer benchmark is shown. It reads best as a broadening option, not a substitute for the FY2027 slate decision already in play.',
+       gaps:[
+         {label:'No RSAF public-affairs or Info Centre exposure yet', note:'Both the Mass Comm degree and the Strategic Comms certificate are externally acquired — neither has been tested in an actual RSAF posting'},
+         {label:'Would need explicit Career Manager buy-in on timing', note:'Best framed as a short attachment rather than a redirect away from the Dy CO / Senior SO / CO-direct / Br Hd decision'}
+       ],
+       nextStep:'Raise this as an additional broadening option at the FY2027 slate Pact — not as a replacement for the four options already on the table.'},
+      {keywords:['dis','joint intelligence','intelligence','cross-service','joint staff'],
+       agents:['explorer','planning','matching'],
+       heading:'DIS / Joint Intelligence — Cross-Service Tour',
+       response:'A Defence Intelligence Singapore or Joint Staff posting at the MAJ–LTC transition adds strategic intelligence exposure that most CO-track WSOs lack. The Matching Agent notes that officers who complete this tour typically arrive at the Dept Head board with a cross-domain portfolio that is increasingly valued by the COL board over a purely air-centric file — this is already one of the stronger-scoring options on your file.',
+       gaps:[
+         {label:'No cross-domain or joint exposure yet', note:'This tour is precisely what would close that gap — currently outstanding ahead of the FY2027 slate decision'},
+         {label:'Timing against the FY2027 slate needs resolving', note:'Would need to be sequenced against Dy CO / Senior SO / CO-direct / Br Hd, not layered on top of all four'}
+       ],
+       nextStep:'Ask your Career Manager to formally assess DIS/Joint Staff availability against the FY2027 slate timeline, alongside the other three options.'}
+    ],
+    fallback:{
+      agents:['explorer'],
+      heading:'A broader read on your file',
+      response:'The Matching Agent doesn\'t have enough to score that with confidence yet. Based on what\'s on file — a completed OC tour, GKS CSC closing out, and 12 years of F-15SG operational depth — your file currently reads strongly on both the Command (Dy CO / CO-direct) and Staff (Branch Head / Dept Head) lines. Bring the exact wording of what you\'re exploring to your Career Manager directly.',
+      gaps:[
+        {label:'FY2027 slate not yet formally endorsed', note:'Four live options (Dy CO / Senior SO / CO-direct / Br Hd) — no Grp Cdr (SSO) or HAO (SSSO) read locked in yet'}
+      ],
+      nextStep:'Discuss this exact question directly with your Career Manager at the next Career Pact conversation.'}
+  },
+  kumar:{
+    suggestions:['capability development / project management','inter-ministry secondment','policy'],
+    matches:[
+      {keywords:['capability development','capdev','project management','project','pm'],
+       agents:['explorer','planning','matching'],
+       heading:'Capability Development / Project Management track',
+       response:'Your file supports this more concretely than the standard Hd Air Plans destination suggests: your SO, Air Plans HQ RSAF tour (FY2014–17) plus a SAF-sponsored PMP Certification (FY2021) are direct, credentialed evidence for a CapDev-coded appointment. The Planning Agent reads this as a reframing of your existing Staff-track destination, not a new one — but it isn\'t yet reflected on file as CapDev-relevant, so it wouldn\'t currently surface as a distinct match in the Matching Agent\'s ranking.',
+       gaps:[
+         {label:'CapDev tagging not yet reflected on file', note:'The SO Air Plans tour currently reads as a generic staff posting until it is explicitly coded'},
+         {label:'No formal capability-programme appointment yet', note:'The PMP certification is real credential, but hasn\'t yet been tested in an actual capability-programme role'}
+       ],
+       nextStep:'Ask your Career Manager to formally tag the SO Air Plans tour and PMP certification as CapDev-relevant ahead of the FY2027 LTC slate, so AWC Capability Branch appointments surface as matches — not just the default Hd Air Plans line.'},
+      {keywords:['secondment','inter-ministry','mfa','pmo','mha','policy'],
+       agents:['explorer','planning','matching'],
+       heading:'Inter-Ministry Secondment — MFA / PMO / MHA',
+       response:'Post-CO SAFOS scholars who take an inter-ministry secondment before the COL Dept Head board consistently build stronger cross-agency policy portfolios. The Matching Agent notes your air operations and EW background translates naturally to MFA security policy or PMO national security — and the Dept Head board gives real weight to officers who have operated outside the RSAF ecosystem.',
+       gaps:[
+         {label:'No inter-ministry secondment yet', note:'Cross-agency policy exposure gap — the weakest dimension in the HR fit breakdown (58% cross-Dept / Joint exposure)'},
+         {label:'Needs sequencing against SAF SCSC', note:'Both should ideally be held as concurrent options, not discovered as a scheduling conflict at the FY2031 board'}
+       ],
+       nextStep:'Ask your Career Manager to hold both the SCSC slot and a secondment option in parallel now, rather than sequencing them reactively.'}
+    ],
+    fallback:{
+      agents:['explorer'],
+      heading:'A broader read on your file',
+      response:'The Matching Agent doesn\'t have enough to score that with confidence yet. Based on what\'s on file — a completed CO tour, SAFOS scholar standing, and 16 years of service — Department Head at the FY2033 COL board via Branch Head or Dep Dept Head remains the best-supported destination. Bring the exact wording of what you\'re exploring to your Career Manager directly.',
+      gaps:[
+        {label:'SAF SCSC not yet completed', note:'Prerequisite for Dept Head at the FY2033 COL board — currently pending, targeted FY2028'}
+      ],
+      nextStep:'Discuss this exact question directly with your Career Manager at the next Career Pact conversation.'}
+  }
+};
+
+function renderCoachSuggestChips(){
+  const el=document.getElementById('coach-suggest-chips');
+  if(!el) return;
+  const cr=coachResponses[currentPersona]||{};
+  el.innerHTML=(cr.suggestions||[]).map(s=>
+    `<span class="coach-suggest-chip" onclick="askCareerCoach('${s.replace(/'/g,"\\'")}')">${s}</span>`).join('');
+}
+
+function renderCoachResponse(match){
+  if(!match) return;
+  setTextById('coach-response-heading', match.heading||'What your Career Coach found');
+  const card=document.getElementById('coach-response-card');
+  if(card) card.innerHTML=`<div class="ai-card-path">${match.heading||''}</div><div class="ai-card-why">${match.response||''}</div>`;
+  const pipeline=document.getElementById('coach-agent-pipeline');
+  if(pipeline) pipeline.innerHTML=(match.agents||['explorer']).map((a,i,arr)=>{
+    const m=agentMeta[a]||{icon:'🤖',label:a};
+    return `<span class="agent-pill">${m.icon} ${m.label}</span>`+(i<arr.length-1?'<span class="agent-arrow">→</span>':'');
+  }).join('');
+  const gapEl=document.getElementById('coach-gap-list');
+  if(gapEl) gapEl.innerHTML=(match.gaps||[]).map(g=>
+    `<div class="gap-item"><span class="gap-dot missing"></span><div><div class="gap-label">${g.label}</div><div class="gap-impact">${g.note}</div></div></div>`).join('');
+  setTextById('coach-next-step', match.nextStep||'—');
+}
+
+function askCareerCoach(presetText){
+  const inputEl=document.getElementById('coach-input');
+  const query=(presetText!=null?presetText:(inputEl?inputEl.value:'')).trim();
+  if(!query){ if(inputEl) inputEl.focus(); return; }
+  if(inputEl) inputEl.value=query;
+  const thinkBlock=document.getElementById('coach-thinking-block');
+  const respBlock=document.getElementById('coach-response-block');
+  const briefEl=document.getElementById('brief-outer-block');
+  if(respBlock) respBlock.style.display='none';
+  if(briefEl) briefEl.style.display='none';
+  if(thinkBlock) thinkBlock.style.display='block';
+  currentCoachQuery=query;
+  setTimeout(()=>{
+    const cr=coachResponses[currentPersona]||{};
+    const lower=query.toLowerCase();
+    let match=(cr.matches||[]).find(m=>m.keywords.some(k=>lower.includes(k)));
+    if(!match) match=cr.fallback;
+    currentCoachMatch=match;
+    renderCoachResponse(match);
+    if(thinkBlock) thinkBlock.style.display='none';
+    if(respBlock){ respBlock.style.display='block'; respBlock.scrollIntoView({behavior:'smooth',block:'nearest'}); }
+  },900);
+}
+
+function resetCoachFlow(){
+  const inputEl=document.getElementById('coach-input'); if(inputEl) inputEl.value='';
+  const thinkBlock=document.getElementById('coach-thinking-block'); if(thinkBlock) thinkBlock.style.display='none';
+  const respBlock=document.getElementById('coach-response-block'); if(respBlock) respBlock.style.display='none';
+  currentCoachMatch=null; currentCoachQuery='';
+}
+
+function generateCoachBrief(){
+  if(!currentCoachMatch) return;
+  const p=personaData[currentPersona];
+  if(p) setTextById('brief-member',p.briefMember);
+  setTextById('brief-aspiration',(p&&p.snapAspiration?p.snapAspiration+' — ':'')+`currently exploring via AI Career Coach: "${currentCoachQuery}"`);
+  const chipsEl=document.getElementById('brief-paths-chips');
+  if(chipsEl) chipsEl.innerHTML=`<span class="brief-chip">🧭 ${currentCoachMatch.heading||'AI Career Coach exploration'}</span>`;
+  const gapLabels=(currentCoachMatch.gaps||[]).map(g=>g.label);
+  setTextById('brief-questions', `This path was surfaced by the AI Career Coach, not a structured track — is it realistic given current postings and timelines? ${currentCoachMatch.nextStep||''}`);
+  setTextById('brief-gaps', gapLabels.length?gapLabels.join(' · '):'No outstanding gaps identified.');
+  const briefEl=document.getElementById('brief-outer-block');
+  if(briefEl){ briefEl.style.display='block'; briefEl.scrollIntoView({behavior:'smooth',block:'nearest'}); }
 }
 
 
@@ -4048,6 +4357,7 @@ function switchPersona(id) {
   if (!personaData[id]) return;
   currentPersona = id;
   aReset();
+  resetExplorerMode();
   renderPersonaSwitcher();
   applyPersonaToDOM();
 }
