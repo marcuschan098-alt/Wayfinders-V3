@@ -480,6 +480,27 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
 .agent-arrow{color:var(--gray400);font-size:13px;}
 .coach-suggest-chip{font-size:11px;padding:4px 10px;border-radius:999px;background:var(--gray100);color:var(--gray600);cursor:pointer;border:1px solid var(--gray200);transition:all .15s;}
 .coach-suggest-chip:hover{background:var(--g50);border-color:var(--g600);color:var(--g800);}
+/* ══ Guided Demo Mode ══ */
+.demo-spotlight{outline:3px solid var(--a500);outline-offset:4px;border-radius:var(--radius-md);animation:demoPulse 1.6s ease-in-out infinite;position:relative;z-index:5;}
+@keyframes demoPulse{0%,100%{box-shadow:0 0 0 0 rgba(217,119,6,.45);}50%{box-shadow:0 0 0 10px rgba(217,119,6,0);}}
+#demo-launch-btn{position:fixed;bottom:20px;right:20px;z-index:200;background:var(--g800);color:#fff;padding:11px 18px;border-radius:999px;box-shadow:var(--shadow-lg);cursor:pointer;font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;border:none;}
+#demo-launch-btn:hover{background:var(--g700);}
+#demo-bar{display:none;position:fixed;bottom:0;left:0;right:0;z-index:300;background:var(--g900);color:#fff;padding:14px 20px;box-shadow:0 -4px 20px rgba(0,0,0,.3);}
+.demo-bar-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:16px;}
+.demo-step-counter{flex-shrink:0;font-size:11px;font-weight:700;color:rgba(255,255,255,.5);white-space:nowrap;min-width:52px;}
+.demo-step-text{flex:1;min-width:0;}
+.demo-step-title{font-size:13px;font-weight:700;margin-bottom:2px;}
+.demo-step-narration{font-size:12px;color:rgba(255,255,255,.78);line-height:1.45;}
+.demo-controls{flex-shrink:0;display:flex;gap:8px;align-items:center;}
+.demo-btn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22);color:#fff;padding:8px 14px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:500;}
+.demo-btn:hover{background:rgba(255,255,255,.18);}
+.demo-btn:disabled{opacity:.35;cursor:not-allowed;}
+.demo-btn-next{background:var(--a500);border-color:var(--a500);font-weight:700;}
+.demo-btn-next:hover{background:var(--a700);}
+.demo-btn-exit{background:transparent;border:none;color:rgba(255,255,255,.5);cursor:pointer;font-size:18px;padding:4px 8px;line-height:1;}
+.demo-btn-exit:hover{color:#fff;}
+.demo-progress-track{height:3px;background:rgba(255,255,255,.12);border-radius:2px;overflow:hidden;margin-top:10px;}
+.demo-progress-fill{height:100%;background:var(--a500);transition:width .25s ease;}
 .appt-select{width:100%;padding:10px 14px;font-size:13px;font-weight:500;border:1.5px solid var(--gray300);border-radius:var(--radius-sm);background:#fff;color:var(--gray900);cursor:pointer;}
 .appt-select:focus{outline:none;border-color:var(--g800);}
 .ladder-wrap{padding:4px 0;}
@@ -867,7 +888,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
       <div style="font-size:11px;color:var(--gray500);margin:-6px 0 10px;">Drawn from three sources — RSAF training / appointments (🪖), pre-service qualifications (🎓), and mid-career external qualifications / certifications (📜), sponsored or self-funded — since all three make certain career pathways viable.</div>
       <div class="skill-chip-row" id="skills-inventory-row"></div>
 
-      <div class="two-col" style="margin-top:18px;">
+      <div class="two-col" style="margin-top:18px;" id="skills-gaps-two-col">
         <div class="col-card">
           <div class="col-card-title">Capability gaps</div>
           <div id="skills-gap-list"></div>
@@ -892,7 +913,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
     </div>
 
     <!-- Explorer mode selector -->
-    <div class="pe-block">
+    <div class="pe-block" id="explorer-mode-selector-block">
       <div class="pe-block-title">How do you want to explore?</div>
       <div class="explorer-mode-grid">
 
@@ -1080,7 +1101,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
           <div class="ai-card" id="coach-response-card" style="margin-bottom:0;"></div>
         </div>
 
-        <div style="background:var(--a100);border:1px solid #fde68a;border-radius:var(--radius-sm);padding:10px 14px;font-size:12px;color:var(--a900);margin-bottom:20px;">
+        <div id="coach-no-benchmark-banner" style="background:var(--a100);border:1px solid #fde68a;border-radius:var(--radius-sm);padding:10px 14px;font-size:12px;color:var(--a900);margin-bottom:20px;">
           ⚠️ <strong>No peer benchmark shown.</strong> This is a less conventional path, so there isn't yet a reliable "% of similar profiles" figure to compare it against.
         </div>
 
@@ -2876,7 +2897,7 @@ const agentMeta={
    RAG'd against the E-HR & Vector DB) would return. No live model call in this prototype. */
 const coachResponses={
   tan:{
-    suggestions:['cyber and drones','DSTA / weapons integration','joint targeting'],
+    suggestions:['cyber and drones','DSTA / weapons integration','joint targeting','overseas exchange posting'],
     matches:[
       {keywords:['cyber','drone','drones','unmanned','uas','robotics','c4'],
        agents:['explorer','planning','matching'],
@@ -2895,7 +2916,25 @@ const coachResponses={
          {label:'No DSTA attachment or secondment on file', note:'The fit is strong on paper, but nothing has tested it in practice yet'},
          {label:'Would compete for ground-tour posting priority', note:'DSTA attachment and the Air Plans/AWC ground tour options would need to be weighed against each other, not pursued as separate tracks'}
        ],
-       nextStep:'Ask your Career Manager whether a DSTA attachment can be considered as an alternative to (or extension of) the Air Plans/AWC ground tour already under discussion.'}
+       nextStep:'Ask your Career Manager whether a DSTA attachment can be considered as an alternative to (or extension of) the Air Plans/AWC ground tour already under discussion.'},
+      {keywords:['joint targeting','jops','mindef','targeting'],
+       agents:['explorer','planning','matching'],
+       heading:'SAF Joint Targeting Officer (JOPS / MINDEF)',
+       response:'Cross-service joint targeting is an emerging and under-staffed capability area. Your WSO expertise in radar targeting, IR imagery analysis, and strike mission planning is directly transferable to joint targeting roles at JOPS or MINDEF. The Matching Agent scores this around 78% — real fit, but it\'s an emerging capability area that career managers rarely surface proactively.',
+       gaps:[
+         {label:'No joint or cross-service exposure yet', note:'Career to date is entirely within RSAF fighter squadrons — no JOPS or MINDEF joint-staff experience on file'},
+         {label:'Not yet part of any posting discussion', note:'This option hasn\'t been raised with your Career Manager — it isn\'t on the FY2026/27 radar'}
+       ],
+       nextStep:'Ask your Career Manager whether a short JOPS/MINDEF attachment could be explored alongside — not instead of — the AFAC/ground-tour sequence already in motion.'},
+      {keywords:['exchange','pacaf','raaf','overseas','bilateral'],
+       agents:['explorer','planning','matching'],
+       heading:'Air Operations Exchange Officer (US PACAF / RAAF)',
+       response:'RSAF\'s bilateral partnerships with the US Pacific Air Forces and the Royal Australian Air Force create exchange officer postings for experienced WSOs. Your F-15SG hours and mission systems depth are directly transferable. The Matching Agent scores this around 83% — a rare, high-visibility posting that builds a strategic network and strengthens RSAF interoperability.',
+       gaps:[
+         {label:'No exchange-posting nomination on file', note:'Bilateral exchange slots are limited and competitively nominated — nothing has been submitted yet'},
+         {label:'Ground tour timing would need to align', note:'An exchange posting would need to be sequenced against the Q4 2026 ground tour, not layered on top of it'}
+       ],
+       nextStep:'Raise interest in a US PACAF or RAAF exchange posting at the next Career Pact, so your Career Manager can check nomination timing against the FY2026/27 AFAC and ground-tour sequence.'}
     ],
     fallback:{
       agents:['explorer'],
@@ -2908,7 +2947,7 @@ const coachResponses={
       nextStep:'Discuss this exact question directly with your Career Manager at the next Career Pact conversation.'}
   },
   lee:{
-    suggestions:['communications / Info Centre','DIS / joint intelligence','capability development'],
+    suggestions:['communications / Info Centre','DIS / joint intelligence','direct-to-CO','Dept Head as primary destination'],
     matches:[
       {keywords:['comms','communication','communications','media','info centre','information centre','public affairs'],
        agents:['explorer','planning','matching'],
@@ -2927,7 +2966,25 @@ const coachResponses={
          {label:'No cross-domain or joint exposure yet', note:'This tour is precisely what would close that gap — currently outstanding ahead of the FY2027 slate decision'},
          {label:'Timing against the FY2027 slate needs resolving', note:'Would need to be sequenced against Dy CO / Senior SO / CO-direct / Br Hd, not layered on top of all four'}
        ],
-       nextStep:'Ask your Career Manager to formally assess DIS/Joint Staff availability against the FY2027 slate timeline, alongside the other three options.'}
+       nextStep:'Ask your Career Manager to formally assess DIS/Joint Staff availability against the FY2027 slate timeline, alongside the other three options.'},
+      {keywords:['direct to co','direct-to-co','skip dy co','exceptional file','fast track','fast-track'],
+       agents:['explorer','planning','matching'],
+       heading:'Direct-to-CO Slate — Exceptional-File Route',
+       response:'The direct-to-CO pathway skips the Dy CO stepping stone and is available to officers whose pre-CSC OC tour, performance band, and CO board read are all exceptionally strong. The Planning Agent reads your file as supporting this as an outside chance — surfacing it now means your Career Manager can formally assess pipeline vacancy against your file before the FY2027 board, rather than defaulting to Dy CO without checking.',
+       gaps:[
+         {label:'CO board read not yet formally assessed', note:'Direct-to-CO depends on pipeline vacancy and an exceptionally strong file read — neither has been checked by your Career Manager yet'},
+         {label:'File-dependent, not guaranteed', note:'This is an outside chance, not a default expectation — Dy CO remains the more probable FY2027 slate'}
+       ],
+       nextStep:'Ask your Career Manager to formally check CO-track pipeline vacancy against your file before the FY2027 board, so direct-to-CO is assessed rather than defaulted past.'},
+      {keywords:['dept head','department head','parallel destination','col board','fallback'],
+       agents:['explorer','planning','matching'],
+       heading:'Parallel COL Destination — Dept Head as Primary, Not Fallback',
+       response:'Most officers treat the Dept Head line as a fallback if CO does not land. The Matching Agent reads your file as strong enough to hold both simultaneously — CO Fighter Sqn (FY2032) and Dept Head at COL (FY2033) as genuinely parallel destinations. Formalising this in the FY2027 Pact prevents the Dept Head line from being deprioritised if the CO board becomes competitive.',
+       gaps:[
+         {label:'Dept Head line not yet formalised as parallel', note:'Currently discussed only as a fallback if CO doesn\'t land, rather than an actively tracked destination'},
+         {label:'No dedicated policy / inter-agency exposure yet', note:'Needed to build a competitive Dept Head file independent of the CO outcome'}
+       ],
+       nextStep:'Ask that both CO Fighter Sqn (FY2032) and Dept Head at COL (FY2033) be formally recorded as parallel destinations in the FY2027 Pact — not one as a fallback for the other.'}
     ],
     fallback:{
       agents:['explorer'],
@@ -2939,7 +2996,7 @@ const coachResponses={
       nextStep:'Discuss this exact question directly with your Career Manager at the next Career Pact conversation.'}
   },
   kumar:{
-    suggestions:['capability development / project management','inter-ministry secondment','policy'],
+    suggestions:['capability development / project management','inter-ministry secondment','SCSC sequencing','DIS / joint staff'],
     matches:[
       {keywords:['capability development','capdev','project management','project','pm'],
        agents:['explorer','planning','matching'],
@@ -2958,7 +3015,25 @@ const coachResponses={
          {label:'No inter-ministry secondment yet', note:'Cross-agency policy exposure gap — the weakest dimension in the HR fit breakdown (58% cross-Dept / Joint exposure)'},
          {label:'Needs sequencing against SAF SCSC', note:'Both should ideally be held as concurrent options, not discovered as a scheduling conflict at the FY2031 board'}
        ],
-       nextStep:'Ask your Career Manager to hold both the SCSC slot and a secondment option in parallel now, rather than sequencing them reactively.'}
+       nextStep:'Ask your Career Manager to hold both the SCSC slot and a secondment option in parallel now, rather than sequencing them reactively.'},
+      {keywords:['scsc','senior command','staff course','sequencing'],
+       agents:['explorer','planning','matching'],
+       heading:'SAF Senior Command & Staff Course — Early Sequencing',
+       response:'SCSC is typically slated 2–3 years before the COL board. For a FY2033 Dept Head target, SCSC in FY2030–31 is the sweet spot. The Planning Agent flags this now so your Career Manager can hold the SCSC slot alongside the secondment option — running both in sequence rather than discovering a slot conflict at the FY2031 board.',
+       gaps:[
+         {label:'SAF SCSC not yet slated', note:'Targeted for FY2028, but the sweet-spot window (FY2030–31, 2–3 years ahead of the FY2033 board) hasn\'t been formally held on file'},
+         {label:'Sequencing against secondment not yet confirmed', note:'Both need to be planned together now to avoid a slot conflict discovered late, at the FY2031 board'}
+       ],
+       nextStep:'Ask your Career Manager to formally hold the SCSC FY2030–31 window now, alongside — not after — the secondment discussion.'},
+      {keywords:['dis','joint staff','strategic intelligence','joint planning'],
+       agents:['explorer','planning','matching'],
+       heading:'DIS / Joint Staff — Strategic Intelligence Portfolio',
+       response:'A DIS or SAF Joint Staff posting at LTC adds joint planning and strategic intelligence depth that SAFOS scholars typically lack at the point of Dept Head selection. The Matching Agent notes Hd Air Intel or Hd Air Plans as the eventual Dept Head appointment would directly benefit from this background — and it differentiates your file from other post-CO scholars competing for the same COL slots.',
+       gaps:[
+         {label:'No DIS or Joint Staff tour yet', note:'Strategic intelligence portfolio depth that would differentiate the Dept Head file from other post-CO scholars — currently missing'},
+         {label:'Not yet weighed against the inter-ministry secondment option', note:'Both are credible broadening moves — Career Manager should compare rather than default to whichever comes up first'}
+       ],
+       nextStep:'Ask your Career Manager to compare a DIS/Joint Staff tour against the MFA/PMO/MHA secondment option directly, rather than pursuing whichever comes up first.'}
     ],
     fallback:{
       agents:['explorer'],
@@ -2995,7 +3070,7 @@ function renderCoachResponse(match){
   setTextById('coach-next-step', match.nextStep||'—');
 }
 
-function askCareerCoach(presetText){
+function askCareerCoach(presetText,instant){
   const inputEl=document.getElementById('coach-input');
   const query=(presetText!=null?presetText:(inputEl?inputEl.value:'')).trim();
   if(!query){ if(inputEl) inputEl.focus(); return; }
@@ -3005,9 +3080,8 @@ function askCareerCoach(presetText){
   const briefEl=document.getElementById('brief-outer-block');
   if(respBlock) respBlock.style.display='none';
   if(briefEl) briefEl.style.display='none';
-  if(thinkBlock) thinkBlock.style.display='block';
   currentCoachQuery=query;
-  setTimeout(()=>{
+  const finish=()=>{
     const cr=coachResponses[currentPersona]||{};
     const lower=query.toLowerCase();
     let match=(cr.matches||[]).find(m=>m.keywords.some(k=>lower.includes(k)));
@@ -3015,8 +3089,15 @@ function askCareerCoach(presetText){
     currentCoachMatch=match;
     renderCoachResponse(match);
     if(thinkBlock) thinkBlock.style.display='none';
-    if(respBlock){ respBlock.style.display='block'; respBlock.scrollIntoView({behavior:'smooth',block:'nearest'}); }
-  },900);
+    if(respBlock){ respBlock.style.display='block'; if(!instant) respBlock.scrollIntoView({behavior:'smooth',block:'nearest'}); }
+  };
+  if(instant){
+    if(thinkBlock) thinkBlock.style.display='none';
+    finish();
+    return;
+  }
+  if(thinkBlock) thinkBlock.style.display='block';
+  setTimeout(finish,900);
 }
 
 function resetCoachFlow(){
@@ -5069,8 +5150,206 @@ function cancelAspiration(){
   if(btn) btn.style.display='';
   if(area) area.style.display='none';
 }
+
+/* ══════════════════════════════════════════════════════════════════════
+   GUIDED DEMO MODE
+   A scripted Next/Prev walkthrough of the Career Twin feature set, for
+   presenting to a panel without clicking or typing through the live app.
+   Each step's run(instant) performs the real UI action via the same
+   functions a user would trigger by hand. Prev/jump-around works by
+   resetting to a clean baseline and instantly replaying steps 0..N — so
+   state is always reconstructed correctly regardless of direction.
+   Arrow keys / Space / PageUp/PageDown map to Prev/Next so a presentation
+   clicker works out of the box; Escape exits.
+   ══════════════════════════════════════════════════════════════════════ */
+let demoActive=false, demoStepIndex=-1, demoHighlightEl=null;
+
+const demoSteps=[
+  {title:'Welcome — CPT Tan’s Career Twin',
+   narration:'This is CPT Tan Wei Xiang’s Career Twin — his personal, AI-assisted career profile.',
+   run:function(instant){ navigate('a',document.querySelector('.nav-btn')); switchPersona('tan'); },
+   highlight:'#profile-card-a'},
+  {title:'Career history feeds everything',
+   narration:'His courses and appointment history drive everything downstream — nothing here is re-entered by hand.',
+   run:function(instant){},
+   highlight:'#hist-rows-a'},
+  {title:'Skills & Capabilities Profile',
+   narration:'Instead of asking “what appointment is next”, we start from what he can actually do.',
+   run:function(instant){},
+   highlight:'#skills-panel-a'},
+  {title:'Three sources of skill',
+   narration:'Notice the badges — RSAF training, pre-service qualifications, and mid-career certifications. All three count toward the profile.',
+   run:function(instant){},
+   highlight:'#skills-inventory-row'},
+  {title:'Gaps map to real interventions',
+   narration:'Every capability gap is paired with a concrete development step — not a generic to-do.',
+   run:function(instant){},
+   highlight:'#skills-gaps-two-col'},
+  {title:'Adjacent opportunities',
+   narration:'And these are the non-obvious paths this profile already opens up, before we even explore further.',
+   run:function(instant){},
+   highlight:'#skills-opp-row'},
+  {title:'Path Explorer — two ways in',
+   narration:'From here there are two ways forward: ask an AI Career Coach in free text, or pick a structured career track.',
+   run:function(instant){},
+   highlight:'#explorer-mode-selector-block'},
+  {title:'Ask the AI Career Coach',
+   narration:'Let’s try the free-text route first.',
+   run:function(instant){ selectExplorerMode('coach',document.getElementById('mode-card-coach')); },
+   highlight:'#mode-ai-coach-flow'},
+  {title:'“cyber and drones”',
+   narration:'Watch the Explorer Agent consult the Planning and Matching Agents to answer a genuinely non-obvious question.',
+   run:function(instant){ askCareerCoach('cyber and drones',instant); },
+   highlight:'#coach-response-block'},
+  {title:'No peer benchmark — and why',
+   narration:'Because this isn’t a well-trodden path, there’s deliberately no “% of similar profiles” figure shown.',
+   run:function(instant){},
+   highlight:'#coach-no-benchmark-banner'},
+  {title:'Generate the Prep Brief',
+   narration:'One click turns this exploration into a structured conversation brief.',
+   run:function(instant){ generateCoachBrief(); },
+   highlight:'#brief-outer-block'},
+  {title:'Send to stakeholders',
+   narration:'This routes straight to the right people — his Career Manager here, since he’s not yet senior enough for SSO routing.',
+   run:function(instant){ sendCareerBrief(); },
+   highlight:'#cmgr-brief-body'},
+  {title:'Second route: Choose a Career Track',
+   narration:'Now the structured route — for a more conventional path.',
+   run:function(instant){ navigate('a',document.querySelector('.nav-btn')); resetExplorerMode(); selectExplorerMode('track',document.getElementById('mode-card-track')); },
+   highlight:'#mode-track-flow'},
+  {title:'Pick a track',
+   narration:'Command, Staff, or Instructor — each shows its own next step and peer benchmark.',
+   run:function(instant){ selectTrack('command',document.getElementById('track-card-command')); },
+   highlight:'#appt-block'},
+  {title:'Target: Deputy CO, Fighter Squadron',
+   narration:'Now a specific target appointment — and the full ladder path to get there.',
+   run:function(instant){ const sel=document.getElementById('appt-select'); if(sel) sel.value='dy-co'; selectAppointment('dy-co'); },
+   highlight:'#ladder-path-viz'},
+  {title:'Peer benchmark IS shown here',
+   narration:'Unlike the AI Coach path, this one is well-trodden — so the benchmark and prerequisite gaps are both shown.',
+   run:function(instant){},
+   highlight:'#outcomes-block'},
+  {title:'Compare tracks side-by-side',
+   narration:'Officers can also compare any two tracks directly.',
+   run:function(instant){ const body=document.getElementById('wi-body'); if(body&&body.style.display==='none') togglePeSection('wi-body','wi-chevron'); renderWhatsIf(); },
+   highlight:'#wi-block'},
+  {title:'AI Path Generator',
+   narration:'The same AI layer surfaces non-obvious paths even inside the structured flow.',
+   run:function(instant){ const body=document.getElementById('ai-body'); if(body&&body.style.display==='none') togglePeSection('ai-body','ai-chevron'); },
+   highlight:'#ai-block'},
+  {title:'Send this brief too',
+   narration:'Same Prep Brief, same stakeholder routing — both routes converge here.',
+   run:function(instant){ sendCareerBrief(); },
+   highlight:'#cmgr-brief-body'},
+  {title:'Works for every officer',
+   narration:'Switching personas — MAJ Lee’s profile, gaps, and coach responses all update instantly, with nothing re-entered.',
+   run:function(instant){ navigate('a',document.querySelector('.nav-btn')); switchPersona('lee'); },
+   highlight:'#profile-card-a'}
+];
+
+function demoHighlight(selector){
+  if(demoHighlightEl){ demoHighlightEl.classList.remove('demo-spotlight'); demoHighlightEl=null; }
+  if(!selector) return;
+  const el=document.querySelector(selector);
+  if(!el) return;
+  el.classList.add('demo-spotlight');
+  demoHighlightEl=el;
+  setTimeout(()=>{ el.scrollIntoView({behavior:'smooth',block:'center'}); },30);
+}
+
+function updateDemoBarUI(idx){
+  const step=demoSteps[idx];
+  if(!step) return;
+  setTextById('demo-step-counter',(idx+1)+' / '+demoSteps.length);
+  setTextById('demo-step-title',step.title);
+  setTextById('demo-step-narration',step.narration);
+  const fill=document.getElementById('demo-progress-fill');
+  if(fill) fill.style.width=(((idx+1)/demoSteps.length)*100)+'%';
+  const prevBtn=document.getElementById('demo-prev-btn');
+  const nextBtn=document.getElementById('demo-next-btn');
+  if(prevBtn) prevBtn.disabled=(idx<=0);
+  if(nextBtn){
+    const atEnd=(idx>=demoSteps.length-1);
+    nextBtn.disabled=atEnd;
+    nextBtn.textContent=atEnd?'✓ End of demo':'Next ▶';
+  }
+}
+
+function demoResetBaseline(){
+  currentPersona='tan';
+  aReset();
+  resetExplorerMode();
+  renderPersonaSwitcher();
+  applyPersonaToDOM();
+}
+
+function demoGoto(idx){
+  if(idx<0||idx>=demoSteps.length) return;
+  demoResetBaseline();
+  for(let i=0;i<=idx;i++){
+    try{ demoSteps[i].run(true); }catch(e){ console.error('Demo replay error at step',i,e); }
+  }
+  demoStepIndex=idx;
+  updateDemoBarUI(idx);
+  demoHighlight(demoSteps[idx].highlight);
+}
+
+function demoStart(){
+  demoActive=true;
+  const launchBtn=document.getElementById('demo-launch-btn'); if(launchBtn) launchBtn.style.display='none';
+  const bar=document.getElementById('demo-bar'); if(bar) bar.style.display='block';
+  demoGoto(0);
+}
+
+function demoExit(){
+  demoActive=false;
+  const launchBtn=document.getElementById('demo-launch-btn'); if(launchBtn) launchBtn.style.display='flex';
+  const bar=document.getElementById('demo-bar'); if(bar) bar.style.display='none';
+  if(demoHighlightEl){ demoHighlightEl.classList.remove('demo-spotlight'); demoHighlightEl=null; }
+}
+
+function demoNext(){
+  if(!demoActive) return;
+  if(demoStepIndex+1>=demoSteps.length) return;
+  const idx=demoStepIndex+1;
+  const step=demoSteps[idx];
+  try{ step.run(false); }catch(e){ console.error('Demo step error at',idx,e); }
+  demoStepIndex=idx;
+  updateDemoBarUI(idx);
+  demoHighlight(step.highlight);
+}
+
+function demoPrev(){
+  if(!demoActive) return;
+  if(demoStepIndex<=0) return;
+  demoGoto(demoStepIndex-1);
+}
+
+document.addEventListener('keydown',function(e){
+  if(!demoActive) return;
+  if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){ e.preventDefault(); demoNext(); }
+  else if(e.key==='ArrowLeft'||e.key==='PageUp'){ e.preventDefault(); demoPrev(); }
+  else if(e.key==='Escape'){ demoExit(); }
+});
 </script>
 
+<!-- ══ Guided Demo Mode — Next/Prev walkthrough for panel demos, no typing/clicking through the app required ══ -->
+<button id="demo-launch-btn" onclick="demoStart()">🎬 Start Guided Demo</button>
+<div id="demo-bar">
+  <div class="demo-bar-inner">
+    <div class="demo-step-counter" id="demo-step-counter">1 / 1</div>
+    <div class="demo-step-text">
+      <div class="demo-step-title" id="demo-step-title">—</div>
+      <div class="demo-step-narration" id="demo-step-narration">—</div>
+    </div>
+    <div class="demo-controls">
+      <button class="demo-btn" id="demo-prev-btn" onclick="demoPrev()">◀ Prev</button>
+      <button class="demo-btn demo-btn-next" id="demo-next-btn" onclick="demoNext()">Next ▶</button>
+      <button class="demo-btn-exit" onclick="demoExit()" title="Exit demo (Esc)">✕</button>
+    </div>
+  </div>
+  <div class="demo-progress-track"><div class="demo-progress-fill" id="demo-progress-fill" style="width:0%;"></div></div>
+</div>
 
 </body>
 </html>
