@@ -483,11 +483,15 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
 /* ══ Guided Demo Mode ══ */
 .demo-spotlight{outline:3px solid var(--a500);outline-offset:4px;border-radius:var(--radius-md);animation:demoPulse 1.6s ease-in-out infinite;position:relative;z-index:5;}
 @keyframes demoPulse{0%,100%{box-shadow:0 0 0 0 rgba(217,119,6,.45);}50%{box-shadow:0 0 0 10px rgba(217,119,6,0);}}
-#demo-launch-btn{position:fixed;bottom:20px;right:20px;z-index:200;background:var(--g800);color:#fff;padding:11px 18px;border-radius:999px;box-shadow:var(--shadow-lg);cursor:pointer;font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;border:none;}
-#demo-launch-btn:hover{background:var(--g700);}
+#demo-launch-wrap{position:fixed;bottom:20px;right:20px;z-index:200;display:flex;flex-direction:column;gap:8px;align-items:flex-end;}
+.demo-launch-btn-opt{background:var(--g800);color:#fff;padding:11px 18px;border-radius:999px;box-shadow:var(--shadow-lg);cursor:pointer;font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;border:none;white-space:nowrap;}
+.demo-launch-btn-opt:hover{background:var(--g700);}
+.demo-launch-btn-quick{background:#1d6f5e;}
+.demo-launch-btn-quick:hover{background:#175a4c;}
 #demo-bar{display:none;position:fixed;bottom:0;left:0;right:0;z-index:300;background:var(--g900);color:#fff;padding:14px 20px;box-shadow:0 -4px 20px rgba(0,0,0,.3);}
 .demo-bar-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:16px;}
 .demo-step-counter{flex-shrink:0;font-size:11px;font-weight:700;color:rgba(255,255,255,.5);white-space:nowrap;min-width:52px;}
+.demo-mode-badge{flex-shrink:0;font-size:11px;font-weight:700;color:#fff;background:rgba(255,255,255,.15);padding:4px 10px;border-radius:999px;white-space:nowrap;}
 .demo-step-text{flex:1;min-width:0;}
 .demo-step-title{font-size:13px;font-weight:700;margin-bottom:2px;}
 .demo-step-narration{font-size:12px;color:rgba(255,255,255,.78);line-height:1.45;}
@@ -5162,9 +5166,42 @@ function cancelAspiration(){
    Arrow keys / Space / PageUp/PageDown map to Prev/Next so a presentation
    clicker works out of the box; Escape exits.
    ══════════════════════════════════════════════════════════════════════ */
-let demoActive=false, demoStepIndex=-1, demoHighlightEl=null;
+let demoActive=false, demoStepIndex=-1, demoHighlightEl=null, activeDemoSteps=null;
 
-const demoSteps=[
+/* ~2 minute panel version — just the reframe, the AI Coach wow-moment, and the brief payoff */
+const demoStepsQuick=[
+  {title:'Career Twin — skills-first, not appointment-first',
+   narration:'This is CPT Tan’s Career Twin. Instead of starting with “what appointment’s next”, we start with what he can actually do — RSAF training, pre-service quals, and mid-career certifications, all in one profile.',
+   run:function(instant){ navigate('a',document.querySelector('.nav-btn')); switchPersona('tan'); },
+   highlight:'#skills-panel-a'},
+  {title:'Two ways to explore a path',
+   narration:'From here he can pick a structured track, or just ask in free text. Let’s ask about something non-obvious — cyber and drones.',
+   run:function(instant){ selectExplorerMode('coach',document.getElementById('mode-card-coach')); },
+   highlight:'#mode-ai-coach-flow'},
+  {title:'Explorer, Planning & Matching Agents respond',
+   narration:'The Explorer Agent consults the Planning and Matching Agents, and grounds the answer in his actual file — his engineering degree and UAS certification — not a generic answer.',
+   run:function(instant){ askCareerCoach('cyber and drones',instant); },
+   highlight:'#coach-response-block'},
+  {title:'No peer benchmark — deliberately',
+   narration:'Notice there’s no peer benchmark shown here — this isn’t a well-trodden path, so the system doesn’t pretend to have one.',
+   run:function(instant){},
+   highlight:'#coach-no-benchmark-banner'},
+  {title:'One click to a Prep Brief',
+   narration:'One click turns this exploration into a structured conversation brief, ready to send to his Career Manager.',
+   run:function(instant){ generateCoachBrief(); },
+   highlight:'#brief-outer-block'},
+  {title:'The structured route, for contrast',
+   narration:'For a conventional path, the same Career Twin gives a full ladder — courses, boards, appointments — with a real peer benchmark.',
+   run:function(instant){ navigate('a',document.querySelector('.nav-btn')); resetExplorerMode(); selectExplorerMode('track',document.getElementById('mode-card-track')); selectTrack('command',document.getElementById('track-card-command')); const sel=document.getElementById('appt-select'); if(sel) sel.value='dy-co'; selectAppointment('dy-co'); },
+   highlight:'#ladder-path-viz'},
+  {title:'Same system, every officer',
+   narration:'And switching to a different officer — same system, nothing re-entered.',
+   run:function(instant){ navigate('a',document.querySelector('.nav-btn')); switchPersona('lee'); },
+   highlight:'#profile-card-a'}
+];
+
+/* Full ~8-9 minute walkthrough */
+const demoStepsFull=[
   {title:'Welcome — CPT Tan’s Career Twin',
    narration:'This is CPT Tan Wei Xiang’s Career Twin — his personal, AI-assisted career profile.',
    run:function(instant){ navigate('a',document.querySelector('.nav-btn')); switchPersona('tan'); },
@@ -5258,18 +5295,18 @@ function demoHighlight(selector){
 }
 
 function updateDemoBarUI(idx){
-  const step=demoSteps[idx];
+  const step=activeDemoSteps[idx];
   if(!step) return;
-  setTextById('demo-step-counter',(idx+1)+' / '+demoSteps.length);
+  setTextById('demo-step-counter',(idx+1)+' / '+activeDemoSteps.length);
   setTextById('demo-step-title',step.title);
   setTextById('demo-step-narration',step.narration);
   const fill=document.getElementById('demo-progress-fill');
-  if(fill) fill.style.width=(((idx+1)/demoSteps.length)*100)+'%';
+  if(fill) fill.style.width=(((idx+1)/activeDemoSteps.length)*100)+'%';
   const prevBtn=document.getElementById('demo-prev-btn');
   const nextBtn=document.getElementById('demo-next-btn');
   if(prevBtn) prevBtn.disabled=(idx<=0);
   if(nextBtn){
-    const atEnd=(idx>=demoSteps.length-1);
+    const atEnd=(idx>=activeDemoSteps.length-1);
     nextBtn.disabled=atEnd;
     nextBtn.textContent=atEnd?'✓ End of demo':'Next ▶';
   }
@@ -5284,35 +5321,37 @@ function demoResetBaseline(){
 }
 
 function demoGoto(idx){
-  if(idx<0||idx>=demoSteps.length) return;
+  if(!activeDemoSteps||idx<0||idx>=activeDemoSteps.length) return;
   demoResetBaseline();
   for(let i=0;i<=idx;i++){
-    try{ demoSteps[i].run(true); }catch(e){ console.error('Demo replay error at step',i,e); }
+    try{ activeDemoSteps[i].run(true); }catch(e){ console.error('Demo replay error at step',i,e); }
   }
   demoStepIndex=idx;
   updateDemoBarUI(idx);
-  demoHighlight(demoSteps[idx].highlight);
+  demoHighlight(activeDemoSteps[idx].highlight);
 }
 
-function demoStart(){
+function demoStart(mode){
+  activeDemoSteps=(mode==='quick')?demoStepsQuick:demoStepsFull;
   demoActive=true;
-  const launchBtn=document.getElementById('demo-launch-btn'); if(launchBtn) launchBtn.style.display='none';
+  const launchWrap=document.getElementById('demo-launch-wrap'); if(launchWrap) launchWrap.style.display='none';
   const bar=document.getElementById('demo-bar'); if(bar) bar.style.display='block';
+  setTextById('demo-mode-badge',mode==='quick'?'⚡ Quick (~2 min)':'🎬 Full (~9 min)');
   demoGoto(0);
 }
 
 function demoExit(){
   demoActive=false;
-  const launchBtn=document.getElementById('demo-launch-btn'); if(launchBtn) launchBtn.style.display='flex';
+  const launchWrap=document.getElementById('demo-launch-wrap'); if(launchWrap) launchWrap.style.display='flex';
   const bar=document.getElementById('demo-bar'); if(bar) bar.style.display='none';
   if(demoHighlightEl){ demoHighlightEl.classList.remove('demo-spotlight'); demoHighlightEl=null; }
 }
 
 function demoNext(){
   if(!demoActive) return;
-  if(demoStepIndex+1>=demoSteps.length) return;
+  if(demoStepIndex+1>=activeDemoSteps.length) return;
   const idx=demoStepIndex+1;
-  const step=demoSteps[idx];
+  const step=activeDemoSteps[idx];
   try{ step.run(false); }catch(e){ console.error('Demo step error at',idx,e); }
   demoStepIndex=idx;
   updateDemoBarUI(idx);
@@ -5334,10 +5373,14 @@ document.addEventListener('keydown',function(e){
 </script>
 
 <!-- ══ Guided Demo Mode — Next/Prev walkthrough for panel demos, no typing/clicking through the app required ══ -->
-<button id="demo-launch-btn" onclick="demoStart()">🎬 Start Guided Demo</button>
+<div id="demo-launch-wrap">
+  <button id="demo-launch-btn-quick" class="demo-launch-btn-opt demo-launch-btn-quick" onclick="demoStart('quick')">⚡ Quick Demo (~2 min)</button>
+  <button id="demo-launch-btn-full" class="demo-launch-btn-opt demo-launch-btn-full" onclick="demoStart('full')">🎬 Full Demo (~9 min)</button>
+</div>
 <div id="demo-bar">
   <div class="demo-bar-inner">
     <div class="demo-step-counter" id="demo-step-counter">1 / 1</div>
+    <div class="demo-mode-badge" id="demo-mode-badge">—</div>
     <div class="demo-step-text">
       <div class="demo-step-title" id="demo-step-title">—</div>
       <div class="demo-step-narration" id="demo-step-narration">—</div>
