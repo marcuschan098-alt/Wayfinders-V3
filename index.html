@@ -43,6 +43,12 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
 .nl-b{background:var(--a100);color:var(--a900);}
 .nl-c{background:var(--r100);color:var(--r900);}
 .sb-footer{padding:12px 16px;border-top:1px solid rgba(255,255,255,.08);font-size:10px;color:rgba(255,255,255,.25);line-height:1.7;}
+.sb-qr-box{padding:14px 16px;border-top:1px solid rgba(255,255,255,.08);text-align:center;}
+.sb-qr-label{font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:8px;}
+.sb-qr-frame{background:#fff;border-radius:10px;padding:8px;display:inline-block;width:104px;height:104px;box-sizing:border-box;box-shadow:0 2px 10px rgba(0,0,0,.25);}
+.sb-qr-frame svg{display:block;width:100%;height:100%;}
+.sb-qr-hint{font-size:10px;color:rgba(255,255,255,.45);margin-top:8px;line-height:1.5;}
+.sb-qr-url{font-size:9px;color:rgba(255,255,255,.3);margin-top:3px;word-break:break-all;}
 
 /* ── Main ── */
 .main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
@@ -483,6 +489,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
 /* ══ Guided Demo Mode ══ */
 .demo-spotlight{outline:3px solid var(--a500);outline-offset:4px;border-radius:var(--radius-md);animation:demoPulse 1.6s ease-in-out infinite;position:relative;z-index:5;}
 @keyframes demoPulse{0%,100%{box-shadow:0 0 0 0 rgba(217,119,6,.45);}50%{box-shadow:0 0 0 10px rgba(217,119,6,0);}}
+#demo-group-box{display:none;position:fixed;border:3px solid var(--a500);border-radius:16px;background:rgba(217,119,6,.06);pointer-events:none;z-index:250;animation:demoPulse 1.6s ease-in-out infinite;transition:top .35s ease,left .35s ease,width .35s ease,height .35s ease;}
 #demo-launch-wrap{position:fixed;bottom:20px;right:20px;z-index:200;display:flex;flex-direction:column;gap:8px;align-items:flex-end;}
 .demo-launch-btn-opt{background:var(--g800);color:#fff;padding:11px 18px;border-radius:999px;box-shadow:var(--shadow-lg);cursor:pointer;font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;border:none;white-space:nowrap;}
 .demo-launch-btn-opt:hover{background:var(--g700);}
@@ -594,7 +601,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
 
   /* Sidebar → slim bottom nav */
   .sidebar{width:100%;height:auto;flex-direction:row;overflow-x:auto;overflow-y:hidden;flex-shrink:0;}
-  .sb-brand,.sb-footer,.sb-group-label{display:none;}
+  .sb-brand,.sb-footer,.sb-group-label,.sb-qr-box{display:none;}
   .sb-nav{display:flex;flex-direction:row;padding:4px 8px;gap:0;flex:1;justify-content:space-around;align-items:stretch;}
   .nav-btn{flex-direction:column;gap:2px;padding:6px 10px;font-size:10px;align-items:center;justify-content:center;flex:1;text-align:center;border-radius:8px;}
   .nav-letter{width:26px;height:26px;font-size:9px;}
@@ -784,10 +791,10 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
     <button class="nav-btn active" onclick="navigate('a',this)">
       <span class="nav-letter nl-a">A</span> Career Twin
     </button>
-    <button class="nav-btn" onclick="navigate('b',this)" style="opacity:.35;" title="Coming soon">
+    <button class="nav-btn" id="nav-btn-b" onclick="navigate('b',this)" style="opacity:.35;" title="Coming soon">
       <span class="nav-letter nl-b">B</span> Poach Value
     </button>
-    <button class="nav-btn" onclick="navigate('c',this)" style="opacity:.35;" title="Coming soon">
+    <button class="nav-btn" id="nav-btn-c" onclick="navigate('c',this)" style="opacity:.35;" title="Coming soon">
       <span class="nav-letter nl-c">C</span> Four-Seat Pact
     </button>
     <div style="margin-top:14px;border-top:1px solid rgba(255,255,255,.12);padding-top:10px;">
@@ -796,6 +803,12 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
         <span class="nav-letter" style="background:#ffc850;color:#1a2a3a;font-size:12px;">⚙</span> Career Twin (Admin)
       </button>
     </div>
+  </div>
+  <div class="sb-qr-box">
+    <div class="sb-qr-label">Try it yourself</div>
+    <div class="sb-qr-frame"><svg viewBox="0 0 123 123" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges" role="img" aria-label="QR code linking to the Wayfinders V3 prototype"><rect width="123" height="123" fill="#ffffff"/><rect x="12" y="12" width="21" height="3" fill="#0f172a"/><rect x="42" y="12" width="6" height="3" fill="#0f172a"/><rect x="51" y="12" width="3" height="3" fill="#0f172a"/><rect x="60" y="12" width="12" height="3" fill="#0f172a"/><rect x="75" y="12" width="9" height="3" fill="#0f172a"/><rect x="90" y="12" width="21" height="3" fill="#0f172a"/><rect x="12" y="15" width="3" height="3" fill="#0f172a"/><rect x="30" y="15" width="3" height="3" fill="#0f172a"/><rect x="39" y="15" width="3" height="3" fill="#0f172a"/><rect x="45" y="15" width="15" height="3" fill="#0f172a"/><rect x="63" y="15" width="3" height="3" fill="#0f172a"/><rect x="90" y="15" width="3" height="3" fill="#0f172a"/><rect x="108" y="15" width="3" height="3" fill="#0f172a"/><rect x="12" y="18" width="3" height="3" fill="#0f172a"/><rect x="18" y="18" width="9" height="3" fill="#0f172a"/><rect x="30" y="18" width="3" height="3" fill="#0f172a"/><rect x="36" y="18" width="12" height="3" fill="#0f172a"/><rect x="51" y="18" width="3" height="3" fill="#0f172a"/><rect x="57" y="18" width="12" height="3" fill="#0f172a"/><rect x="75" y="18" width="3" height="3" fill="#0f172a"/><rect x="90" y="18" width="3" height="3" fill="#0f172a"/><rect x="96" y="18" width="9" height="3" fill="#0f172a"/><rect x="108" y="18" width="3" height="3" fill="#0f172a"/><rect x="12" y="21" width="3" height="3" fill="#0f172a"/><rect x="18" y="21" width="9" height="3" fill="#0f172a"/><rect x="30" y="21" width="3" height="3" fill="#0f172a"/><rect x="36" y="21" width="6" height="3" fill="#0f172a"/><rect x="45" y="21" width="6" height="3" fill="#0f172a"/><rect x="54" y="21" width="9" height="3" fill="#0f172a"/><rect x="69" y="21" width="6" height="3" fill="#0f172a"/><rect x="78" y="21" width="3" height="3" fill="#0f172a"/><rect x="90" y="21" width="3" height="3" fill="#0f172a"/><rect x="96" y="21" width="9" height="3" fill="#0f172a"/><rect x="108" y="21" width="3" height="3" fill="#0f172a"/><rect x="12" y="24" width="3" height="3" fill="#0f172a"/><rect x="18" y="24" width="9" height="3" fill="#0f172a"/><rect x="30" y="24" width="3" height="3" fill="#0f172a"/><rect x="36" y="24" width="6" height="3" fill="#0f172a"/><rect x="51" y="24" width="3" height="3" fill="#0f172a"/><rect x="57" y="24" width="3" height="3" fill="#0f172a"/><rect x="63" y="24" width="6" height="3" fill="#0f172a"/><rect x="75" y="24" width="9" height="3" fill="#0f172a"/><rect x="90" y="24" width="3" height="3" fill="#0f172a"/><rect x="96" y="24" width="9" height="3" fill="#0f172a"/><rect x="108" y="24" width="3" height="3" fill="#0f172a"/><rect x="12" y="27" width="3" height="3" fill="#0f172a"/><rect x="30" y="27" width="3" height="3" fill="#0f172a"/><rect x="36" y="27" width="3" height="3" fill="#0f172a"/><rect x="48" y="27" width="3" height="3" fill="#0f172a"/><rect x="57" y="27" width="6" height="3" fill="#0f172a"/><rect x="72" y="27" width="3" height="3" fill="#0f172a"/><rect x="90" y="27" width="3" height="3" fill="#0f172a"/><rect x="108" y="27" width="3" height="3" fill="#0f172a"/><rect x="12" y="30" width="21" height="3" fill="#0f172a"/><rect x="36" y="30" width="3" height="3" fill="#0f172a"/><rect x="42" y="30" width="3" height="3" fill="#0f172a"/><rect x="48" y="30" width="3" height="3" fill="#0f172a"/><rect x="54" y="30" width="3" height="3" fill="#0f172a"/><rect x="60" y="30" width="3" height="3" fill="#0f172a"/><rect x="66" y="30" width="3" height="3" fill="#0f172a"/><rect x="72" y="30" width="3" height="3" fill="#0f172a"/><rect x="78" y="30" width="3" height="3" fill="#0f172a"/><rect x="84" y="30" width="3" height="3" fill="#0f172a"/><rect x="90" y="30" width="21" height="3" fill="#0f172a"/><rect x="36" y="33" width="3" height="3" fill="#0f172a"/><rect x="57" y="33" width="3" height="3" fill="#0f172a"/><rect x="75" y="33" width="6" height="3" fill="#0f172a"/><rect x="12" y="36" width="3" height="3" fill="#0f172a"/><rect x="18" y="36" width="15" height="3" fill="#0f172a"/><rect x="39" y="36" width="3" height="3" fill="#0f172a"/><rect x="51" y="36" width="15" height="3" fill="#0f172a"/><rect x="72" y="36" width="3" height="3" fill="#0f172a"/><rect x="78" y="36" width="3" height="3" fill="#0f172a"/><rect x="90" y="36" width="15" height="3" fill="#0f172a"/><rect x="18" y="39" width="3" height="3" fill="#0f172a"/><rect x="24" y="39" width="6" height="3" fill="#0f172a"/><rect x="36" y="39" width="9" height="3" fill="#0f172a"/><rect x="48" y="39" width="3" height="3" fill="#0f172a"/><rect x="54" y="39" width="3" height="3" fill="#0f172a"/><rect x="60" y="39" width="3" height="3" fill="#0f172a"/><rect x="66" y="39" width="6" height="3" fill="#0f172a"/><rect x="75" y="39" width="3" height="3" fill="#0f172a"/><rect x="81" y="39" width="3" height="3" fill="#0f172a"/><rect x="90" y="39" width="6" height="3" fill="#0f172a"/><rect x="99" y="39" width="6" height="3" fill="#0f172a"/><rect x="108" y="39" width="3" height="3" fill="#0f172a"/><rect x="12" y="42" width="3" height="3" fill="#0f172a"/><rect x="18" y="42" width="6" height="3" fill="#0f172a"/><rect x="27" y="42" width="12" height="3" fill="#0f172a"/><rect x="57" y="42" width="6" height="3" fill="#0f172a"/><rect x="66" y="42" width="3" height="3" fill="#0f172a"/><rect x="72" y="42" width="3" height="3" fill="#0f172a"/><rect x="90" y="42" width="3" height="3" fill="#0f172a"/><rect x="96" y="42" width="3" height="3" fill="#0f172a"/><rect x="102" y="42" width="6" height="3" fill="#0f172a"/><rect x="15" y="45" width="6" height="3" fill="#0f172a"/><rect x="24" y="45" width="6" height="3" fill="#0f172a"/><rect x="36" y="45" width="9" height="3" fill="#0f172a"/><rect x="54" y="45" width="6" height="3" fill="#0f172a"/><rect x="75" y="45" width="15" height="3" fill="#0f172a"/><rect x="96" y="45" width="9" height="3" fill="#0f172a"/><rect x="108" y="45" width="3" height="3" fill="#0f172a"/><rect x="30" y="48" width="6" height="3" fill="#0f172a"/><rect x="39" y="48" width="3" height="3" fill="#0f172a"/><rect x="48" y="48" width="3" height="3" fill="#0f172a"/><rect x="66" y="48" width="6" height="3" fill="#0f172a"/><rect x="84" y="48" width="6" height="3" fill="#0f172a"/><rect x="96" y="48" width="6" height="3" fill="#0f172a"/><rect x="105" y="48" width="6" height="3" fill="#0f172a"/><rect x="15" y="51" width="15" height="3" fill="#0f172a"/><rect x="33" y="51" width="3" height="3" fill="#0f172a"/><rect x="45" y="51" width="18" height="3" fill="#0f172a"/><rect x="72" y="51" width="6" height="3" fill="#0f172a"/><rect x="81" y="51" width="3" height="3" fill="#0f172a"/><rect x="90" y="51" width="3" height="3" fill="#0f172a"/><rect x="105" y="51" width="6" height="3" fill="#0f172a"/><rect x="12" y="54" width="3" height="3" fill="#0f172a"/><rect x="21" y="54" width="3" height="3" fill="#0f172a"/><rect x="27" y="54" width="9" height="3" fill="#0f172a"/><rect x="39" y="54" width="3" height="3" fill="#0f172a"/><rect x="45" y="54" width="9" height="3" fill="#0f172a"/><rect x="66" y="54" width="6" height="3" fill="#0f172a"/><rect x="84" y="54" width="9" height="3" fill="#0f172a"/><rect x="99" y="54" width="9" height="3" fill="#0f172a"/><rect x="12" y="57" width="3" height="3" fill="#0f172a"/><rect x="18" y="57" width="3" height="3" fill="#0f172a"/><rect x="24" y="57" width="6" height="3" fill="#0f172a"/><rect x="36" y="57" width="15" height="3" fill="#0f172a"/><rect x="60" y="57" width="3" height="3" fill="#0f172a"/><rect x="69" y="57" width="12" height="3" fill="#0f172a"/><rect x="87" y="57" width="9" height="3" fill="#0f172a"/><rect x="99" y="57" width="6" height="3" fill="#0f172a"/><rect x="21" y="60" width="6" height="3" fill="#0f172a"/><rect x="30" y="60" width="3" height="3" fill="#0f172a"/><rect x="36" y="60" width="6" height="3" fill="#0f172a"/><rect x="51" y="60" width="6" height="3" fill="#0f172a"/><rect x="63" y="60" width="3" height="3" fill="#0f172a"/><rect x="69" y="60" width="6" height="3" fill="#0f172a"/><rect x="78" y="60" width="3" height="3" fill="#0f172a"/><rect x="84" y="60" width="6" height="3" fill="#0f172a"/><rect x="93" y="60" width="6" height="3" fill="#0f172a"/><rect x="108" y="60" width="3" height="3" fill="#0f172a"/><rect x="12" y="63" width="18" height="3" fill="#0f172a"/><rect x="39" y="63" width="3" height="3" fill="#0f172a"/><rect x="54" y="63" width="3" height="3" fill="#0f172a"/><rect x="60" y="63" width="12" height="3" fill="#0f172a"/><rect x="81" y="63" width="3" height="3" fill="#0f172a"/><rect x="90" y="63" width="6" height="3" fill="#0f172a"/><rect x="99" y="63" width="6" height="3" fill="#0f172a"/><rect x="108" y="63" width="3" height="3" fill="#0f172a"/><rect x="12" y="66" width="12" height="3" fill="#0f172a"/><rect x="27" y="66" width="9" height="3" fill="#0f172a"/><rect x="39" y="66" width="3" height="3" fill="#0f172a"/><rect x="48" y="66" width="3" height="3" fill="#0f172a"/><rect x="57" y="66" width="9" height="3" fill="#0f172a"/><rect x="75" y="66" width="6" height="3" fill="#0f172a"/><rect x="84" y="66" width="6" height="3" fill="#0f172a"/><rect x="93" y="66" width="6" height="3" fill="#0f172a"/><rect x="102" y="66" width="3" height="3" fill="#0f172a"/><rect x="21" y="69" width="9" height="3" fill="#0f172a"/><rect x="33" y="69" width="3" height="3" fill="#0f172a"/><rect x="45" y="69" width="12" height="3" fill="#0f172a"/><rect x="60" y="69" width="9" height="3" fill="#0f172a"/><rect x="75" y="69" width="12" height="3" fill="#0f172a"/><rect x="90" y="69" width="15" height="3" fill="#0f172a"/><rect x="108" y="69" width="3" height="3" fill="#0f172a"/><rect x="18" y="72" width="6" height="3" fill="#0f172a"/><rect x="27" y="72" width="27" height="3" fill="#0f172a"/><rect x="57" y="72" width="6" height="3" fill="#0f172a"/><rect x="75" y="72" width="6" height="3" fill="#0f172a"/><rect x="84" y="72" width="6" height="3" fill="#0f172a"/><rect x="93" y="72" width="9" height="3" fill="#0f172a"/><rect x="12" y="75" width="6" height="3" fill="#0f172a"/><rect x="21" y="75" width="6" height="3" fill="#0f172a"/><rect x="33" y="75" width="3" height="3" fill="#0f172a"/><rect x="39" y="75" width="3" height="3" fill="#0f172a"/><rect x="45" y="75" width="15" height="3" fill="#0f172a"/><rect x="63" y="75" width="6" height="3" fill="#0f172a"/><rect x="78" y="75" width="6" height="3" fill="#0f172a"/><rect x="90" y="75" width="3" height="3" fill="#0f172a"/><rect x="99" y="75" width="3" height="3" fill="#0f172a"/><rect x="108" y="75" width="3" height="3" fill="#0f172a"/><rect x="12" y="78" width="3" height="3" fill="#0f172a"/><rect x="21" y="78" width="15" height="3" fill="#0f172a"/><rect x="39" y="78" width="3" height="3" fill="#0f172a"/><rect x="48" y="78" width="15" height="3" fill="#0f172a"/><rect x="72" y="78" width="6" height="3" fill="#0f172a"/><rect x="84" y="78" width="9" height="3" fill="#0f172a"/><rect x="96" y="78" width="6" height="3" fill="#0f172a"/><rect x="105" y="78" width="3" height="3" fill="#0f172a"/><rect x="12" y="81" width="3" height="3" fill="#0f172a"/><rect x="18" y="81" width="3" height="3" fill="#0f172a"/><rect x="24" y="81" width="3" height="3" fill="#0f172a"/><rect x="33" y="81" width="3" height="3" fill="#0f172a"/><rect x="39" y="81" width="9" height="3" fill="#0f172a"/><rect x="51" y="81" width="3" height="3" fill="#0f172a"/><rect x="57" y="81" width="3" height="3" fill="#0f172a"/><rect x="66" y="81" width="12" height="3" fill="#0f172a"/><rect x="81" y="81" width="3" height="3" fill="#0f172a"/><rect x="87" y="81" width="3" height="3" fill="#0f172a"/><rect x="102" y="81" width="3" height="3" fill="#0f172a"/><rect x="108" y="81" width="3" height="3" fill="#0f172a"/><rect x="12" y="84" width="3" height="3" fill="#0f172a"/><rect x="21" y="84" width="3" height="3" fill="#0f172a"/><rect x="30" y="84" width="15" height="3" fill="#0f172a"/><rect x="51" y="84" width="9" height="3" fill="#0f172a"/><rect x="63" y="84" width="3" height="3" fill="#0f172a"/><rect x="69" y="84" width="6" height="3" fill="#0f172a"/><rect x="78" y="84" width="21" height="3" fill="#0f172a"/><rect x="36" y="87" width="6" height="3" fill="#0f172a"/><rect x="45" y="87" width="6" height="3" fill="#0f172a"/><rect x="54" y="87" width="3" height="3" fill="#0f172a"/><rect x="60" y="87" width="3" height="3" fill="#0f172a"/><rect x="69" y="87" width="3" height="3" fill="#0f172a"/><rect x="75" y="87" width="3" height="3" fill="#0f172a"/><rect x="81" y="87" width="6" height="3" fill="#0f172a"/><rect x="96" y="87" width="3" height="3" fill="#0f172a"/><rect x="102" y="87" width="3" height="3" fill="#0f172a"/><rect x="108" y="87" width="3" height="3" fill="#0f172a"/><rect x="12" y="90" width="21" height="3" fill="#0f172a"/><rect x="42" y="90" width="18" height="3" fill="#0f172a"/><rect x="66" y="90" width="3" height="3" fill="#0f172a"/><rect x="78" y="90" width="9" height="3" fill="#0f172a"/><rect x="90" y="90" width="3" height="3" fill="#0f172a"/><rect x="96" y="90" width="3" height="3" fill="#0f172a"/><rect x="102" y="90" width="6" height="3" fill="#0f172a"/><rect x="12" y="93" width="3" height="3" fill="#0f172a"/><rect x="30" y="93" width="3" height="3" fill="#0f172a"/><rect x="36" y="93" width="3" height="3" fill="#0f172a"/><rect x="45" y="93" width="3" height="3" fill="#0f172a"/><rect x="51" y="93" width="3" height="3" fill="#0f172a"/><rect x="60" y="93" width="3" height="3" fill="#0f172a"/><rect x="69" y="93" width="9" height="3" fill="#0f172a"/><rect x="81" y="93" width="6" height="3" fill="#0f172a"/><rect x="96" y="93" width="12" height="3" fill="#0f172a"/><rect x="12" y="96" width="3" height="3" fill="#0f172a"/><rect x="18" y="96" width="9" height="3" fill="#0f172a"/><rect x="30" y="96" width="3" height="3" fill="#0f172a"/><rect x="36" y="96" width="6" height="3" fill="#0f172a"/><rect x="45" y="96" width="12" height="3" fill="#0f172a"/><rect x="66" y="96" width="6" height="3" fill="#0f172a"/><rect x="84" y="96" width="18" height="3" fill="#0f172a"/><rect x="105" y="96" width="3" height="3" fill="#0f172a"/><rect x="12" y="99" width="3" height="3" fill="#0f172a"/><rect x="18" y="99" width="9" height="3" fill="#0f172a"/><rect x="30" y="99" width="3" height="3" fill="#0f172a"/><rect x="36" y="99" width="6" height="3" fill="#0f172a"/><rect x="48" y="99" width="3" height="3" fill="#0f172a"/><rect x="57" y="99" width="6" height="3" fill="#0f172a"/><rect x="69" y="99" width="3" height="3" fill="#0f172a"/><rect x="75" y="99" width="15" height="3" fill="#0f172a"/><rect x="96" y="99" width="6" height="3" fill="#0f172a"/><rect x="105" y="99" width="6" height="3" fill="#0f172a"/><rect x="12" y="102" width="3" height="3" fill="#0f172a"/><rect x="18" y="102" width="9" height="3" fill="#0f172a"/><rect x="30" y="102" width="3" height="3" fill="#0f172a"/><rect x="36" y="102" width="3" height="3" fill="#0f172a"/><rect x="42" y="102" width="6" height="3" fill="#0f172a"/><rect x="54" y="102" width="3" height="3" fill="#0f172a"/><rect x="72" y="102" width="6" height="3" fill="#0f172a"/><rect x="84" y="102" width="3" height="3" fill="#0f172a"/><rect x="90" y="102" width="6" height="3" fill="#0f172a"/><rect x="99" y="102" width="3" height="3" fill="#0f172a"/><rect x="12" y="105" width="3" height="3" fill="#0f172a"/><rect x="30" y="105" width="3" height="3" fill="#0f172a"/><rect x="48" y="105" width="6" height="3" fill="#0f172a"/><rect x="60" y="105" width="3" height="3" fill="#0f172a"/><rect x="66" y="105" width="6" height="3" fill="#0f172a"/><rect x="75" y="105" width="6" height="3" fill="#0f172a"/><rect x="90" y="105" width="3" height="3" fill="#0f172a"/><rect x="96" y="105" width="9" height="3" fill="#0f172a"/><rect x="12" y="108" width="21" height="3" fill="#0f172a"/><rect x="36" y="108" width="3" height="3" fill="#0f172a"/><rect x="51" y="108" width="3" height="3" fill="#0f172a"/><rect x="63" y="108" width="6" height="3" fill="#0f172a"/><rect x="78" y="108" width="12" height="3" fill="#0f172a"/><rect x="93" y="108" width="3" height="3" fill="#0f172a"/><rect x="99" y="108" width="9" height="3" fill="#0f172a"/></svg></div>
+    <div class="sb-qr-hint">Scan to open the prototype on your own device</div>
+    <div class="sb-qr-url">marcuschan098-alt.github.io/Wayfinders-V3</div>
   </div>
   <div class="sb-footer">ACLM CPI · CVF Council · June 2026<br>Discussion prototype — not live system<br>Figures &amp; scenarios are illustrative.</div>
 </nav>
@@ -854,7 +867,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
     <div id="path-suggest-block" style="margin-bottom:18px;"></div>
 
     <!-- Career snapshot -->
-    <div class="card" style="margin-bottom:20px;">
+    <div class="card" id="career-snapshot-card" style="margin-bottom:20px;">
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
         <div>
           <div class="snap-label" style="display:flex;align-items:center;justify-content:space-between;">
@@ -5166,38 +5179,34 @@ function cancelAspiration(){
    Arrow keys / Space / PageUp/PageDown map to Prev/Next so a presentation
    clicker works out of the box; Escape exits.
    ══════════════════════════════════════════════════════════════════════ */
-let demoActive=false, demoStepIndex=-1, demoHighlightEl=null, activeDemoSteps=null;
+let demoActive=false, demoStepIndex=-1, demoHighlightEl=null, activeDemoSteps=null, demoGroupEls=null;
 
-/* ~2 minute panel version — just the reframe, the AI Coach wow-moment, and the brief payoff */
+/* ~2 minute panel version — 6 tight zoom-ins, one per feature, nothing else on screen */
 const demoStepsQuick=[
-  {title:'Career Twin — skills-first, not appointment-first',
-   narration:'This is CPT Tan’s Career Twin. Instead of starting with “what appointment’s next”, we start with what he can actually do — RSAF training, pre-service quals, and mid-career certifications, all in one profile.',
+  {title:'History → insight: which tracks fit him',
+   narration:'This is CPT Tan’s full record — courses, qualifications, appointments. Twin Insight reads that history and tells him today which tracks he’s best positioned for: Command is a strong fit, Staff a good fit, Instructor possible.',
    run:function(instant){ navigate('a',document.querySelector('.nav-btn')); switchPersona('tan'); },
-   highlight:'#skills-panel-a'},
-  {title:'Two ways to explore a path',
-   narration:'From here he can pick a structured track, or just ask in free text. Let’s ask about something non-obvious — cyber and drones.',
-   run:function(instant){ selectExplorerMode('coach',document.getElementById('mode-card-coach')); },
-   highlight:'#mode-ai-coach-flow'},
-  {title:'Explorer, Planning & Matching Agents respond',
-   narration:'The Explorer Agent consults the Planning and Matching Agents, and grounds the answer in his actual file — his engineering degree and UAS certification — not a generic answer.',
-   run:function(instant){ askCareerCoach('cyber and drones',instant); },
-   highlight:'#coach-response-block'},
-  {title:'No peer benchmark — deliberately',
-   narration:'Notice there’s no peer benchmark shown here — this isn’t a well-trodden path, so the system doesn’t pretend to have one.',
+   highlightGroup:['#profile-card-a','#hist-rows-a','#path-suggest-block']},
+  {title:'Aspiration and conversations, tracked over time',
+   narration:'His stated aspiration, his last career conversation, and the next mandatory trigger all travel with him as he moves between units and supervisors — so nothing gets lost at a handover.',
    run:function(instant){},
-   highlight:'#coach-no-benchmark-banner'},
-  {title:'One click to a Prep Brief',
-   narration:'One click turns this exploration into a structured conversation brief, ready to send to his Career Manager.',
+   highlight:'#career-snapshot-card'},
+  {title:'Skills & Capabilities — for all three stakeholders',
+   narration:'This is the piece that helps everyone: the airman sees his own gaps, the supervisor sees his team’s bench strength, and Career Management can match the best-fit candidate to a vacancy by skill — not just who happens to be available.',
+   run:function(instant){},
+   highlight:'#skills-panel-a'},
+  {title:'Ask my AI Career Coach',
+   narration:'Beyond clicking through a fixed Career Track, he can describe what he’s curious about in his own words. Watch — “cyber and drones” — and the Explorer, Planning and Matching Agents ground the answer in his actual file.',
+   run:function(instant){ selectExplorerMode('coach',document.getElementById('mode-card-coach')); askCareerCoach('cyber and drones',instant); },
+   highlight:'#mode-ai-coach-flow'},
+  {title:'One click: a Career Conversation Prep Brief',
+   narration:'This turns the exploration into a ready-made brief — background, gaps, and suggested questions — for him to bring into a conversation with his supervisor or Career Manager.',
    run:function(instant){ generateCoachBrief(); },
    highlight:'#brief-outer-block'},
-  {title:'The structured route, for contrast',
-   narration:'For a conventional path, the same Career Twin gives a full ladder — courses, boards, appointments — with a real peer benchmark.',
-   run:function(instant){ navigate('a',document.querySelector('.nav-btn')); resetExplorerMode(); selectExplorerMode('track',document.getElementById('mode-card-track')); selectTrack('command',document.getElementById('track-card-command')); const sel=document.getElementById('appt-select'); if(sel) sel.value='dy-co'; selectAppointment('dy-co'); },
-   highlight:'#ladder-path-viz'},
-  {title:'Same system, every officer',
-   narration:'And switching to a different officer — same system, nothing re-entered.',
-   run:function(instant){ navigate('a',document.querySelector('.nav-btn')); switchPersona('lee'); },
-   highlight:'#profile-card-a'}
+  {title:'Phase 2: Poach Value & Four-Seat Pact',
+   narration:'Two more tools are planned for Phase 2 — giving Career Managers and supervisors a snapshot for retention risk, projection, and unit readiness.',
+   run:function(instant){ navigate('a',document.querySelector('.nav-btn')); },
+   highlightGroup:['#nav-btn-b','#nav-btn-c']}
 ];
 
 /* Full ~8-9 minute walkthrough */
@@ -5286,12 +5295,55 @@ const demoStepsFull=[
 
 function demoHighlight(selector){
   if(demoHighlightEl){ demoHighlightEl.classList.remove('demo-spotlight'); demoHighlightEl=null; }
+  demoHighlightGroup(null);
   if(!selector) return;
   const el=document.querySelector(selector);
   if(!el) return;
   el.classList.add('demo-spotlight');
   demoHighlightEl=el;
   setTimeout(()=>{ el.scrollIntoView({behavior:'smooth',block:'center'}); },30);
+}
+
+/* Boxes a GROUP of elements together with one bounding highlight — for zooming a presenter's
+   attention onto several adjacent blocks (e.g. profile card + history + Twin Insight) as one unit,
+   without touching the underlying page layout. */
+function demoHighlightGroup(selectors){
+  if(demoHighlightEl){ demoHighlightEl.classList.remove('demo-spotlight'); demoHighlightEl=null; }
+  const box=document.getElementById('demo-group-box');
+  if(!selectors||!selectors.length){ demoGroupEls=null; if(box) box.style.display='none'; return; }
+  const els=selectors.map(s=>document.querySelector(s)).filter(Boolean);
+  if(!els.length){ demoGroupEls=null; if(box) box.style.display='none'; return; }
+  demoGroupEls=els;
+  els[0].scrollIntoView({behavior:'smooth',block:'center'});
+  setTimeout(positionDemoGroupBox,320);
+}
+
+function positionDemoGroupBox(){
+  if(!demoGroupEls||!demoGroupEls.length) return;
+  let box=document.getElementById('demo-group-box');
+  if(!box){ box=document.createElement('div'); box.id='demo-group-box'; document.body.appendChild(box); }
+  let top=Infinity,left=Infinity,right=-Infinity,bottom=-Infinity;
+  demoGroupEls.forEach(function(el){
+    const r=el.getBoundingClientRect();
+    if(r.width===0&&r.height===0) return;
+    top=Math.min(top,r.top); left=Math.min(left,r.left);
+    right=Math.max(right,r.right); bottom=Math.max(bottom,r.bottom);
+  });
+  if(top===Infinity) return;
+  const pad=10;
+  box.style.top=(top-pad)+'px';
+  box.style.left=(left-pad)+'px';
+  box.style.width=(right-left+pad*2)+'px';
+  box.style.height=(bottom-top+pad*2)+'px';
+  box.style.display='block';
+}
+
+function demoScrollReposition(){ if(demoGroupEls) positionDemoGroupBox(); }
+
+function demoApplyStepHighlight(step){
+  if(!step) return;
+  if(step.highlightGroup) demoHighlightGroup(step.highlightGroup);
+  else demoHighlight(step.highlight);
 }
 
 function updateDemoBarUI(idx){
@@ -5328,7 +5380,7 @@ function demoGoto(idx){
   }
   demoStepIndex=idx;
   updateDemoBarUI(idx);
-  demoHighlight(activeDemoSteps[idx].highlight);
+  demoApplyStepHighlight(activeDemoSteps[idx]);
 }
 
 function demoStart(mode){
@@ -5337,6 +5389,7 @@ function demoStart(mode){
   const launchWrap=document.getElementById('demo-launch-wrap'); if(launchWrap) launchWrap.style.display='none';
   const bar=document.getElementById('demo-bar'); if(bar) bar.style.display='block';
   setTextById('demo-mode-badge',mode==='quick'?'⚡ Quick (~2 min)':'🎬 Full (~9 min)');
+  window.addEventListener('scroll',demoScrollReposition,{passive:true});
   demoGoto(0);
 }
 
@@ -5345,6 +5398,8 @@ function demoExit(){
   const launchWrap=document.getElementById('demo-launch-wrap'); if(launchWrap) launchWrap.style.display='flex';
   const bar=document.getElementById('demo-bar'); if(bar) bar.style.display='none';
   if(demoHighlightEl){ demoHighlightEl.classList.remove('demo-spotlight'); demoHighlightEl=null; }
+  demoHighlightGroup(null);
+  window.removeEventListener('scroll',demoScrollReposition);
 }
 
 function demoNext(){
@@ -5355,7 +5410,7 @@ function demoNext(){
   try{ step.run(false); }catch(e){ console.error('Demo step error at',idx,e); }
   demoStepIndex=idx;
   updateDemoBarUI(idx);
-  demoHighlight(step.highlight);
+  demoApplyStepHighlight(step);
 }
 
 function demoPrev(){
